@@ -741,7 +741,7 @@ struct FrostlakeAlmanacView: View {
     private var festivalsList: some View {
         VStack(spacing: 10) {
             HStack {
-                Text("Lifetime: \(game.state.almanacFestivals.count) / 6 discovered")
+                Text("Lifetime: \(game.state.almanacFestivals.count) / \(FrostlakeFestivalData.all.count) discovered")
                     .font(FrostlakeTypography.serifBody(13))
                     .foregroundColor(FrostlakePalette.foxBrown)
                 Spacer()

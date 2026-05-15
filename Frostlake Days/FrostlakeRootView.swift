@@ -126,7 +126,8 @@ struct FrostlakeOnboardingView: View {
         ("Welcome to Frostlake", "A 30-day winter season in a small, watchful village. Fish, cook, and fill the Almanac."),
         ("Choose Each Time Block", "The day has six time blocks. Pick one activity per block; sleep ends the day."),
         ("Talk to Villagers Daily", "Eight neighbours move through the cove on their own schedules. Visit, gift, listen."),
-        ("Complete the Almanac", "Twenty-two fish, twelve foraged finds, eight portraits, six festivals — fill them all.")
+        ("Complete the Almanac",
+         "\(FrostlakeFishData.all.count) fish, \(FrostlakeForagedData.all.count) foraged finds, 8 portraits, \(FrostlakeFestivalData.all.count) festivals — fill them all.")
     ]
 
     var body: some View {
@@ -204,9 +205,9 @@ struct FrostlakeSeasonSummaryView: View {
                 Text("Grade: \(game.gradeLabel(grade))")
                     .font(FrostlakeTypography.serifTitle(48))
                     .foregroundColor(FrostlakePalette.ember)
-                summaryRow("Species recorded", "\(game.state.almanacSpecies.count) / 22")
-                summaryRow("Foraged finds", "\(game.state.almanacFinds.count) / 12")
-                summaryRow("Festivals attended (this season)", "\(game.state.festivalsAttended.count) / 6")
+                summaryRow("Species recorded", "\(game.state.almanacSpecies.count) / \(FrostlakeFishData.all.count)")
+                summaryRow("Foraged finds", "\(game.state.almanacFinds.count) / \(FrostlakeForagedData.all.count)")
+                summaryRow("Festivals attended (this season)", "\(game.state.festivalsAttended.count) / \(FrostlakeFestivalData.all.count)")
                 summaryRow("Seasons completed", "\(game.state.seasonsCompleted)")
                 summaryRow("Best grade", game.gradeLabel(game.state.bestSeasonGrade))
                 Spacer()

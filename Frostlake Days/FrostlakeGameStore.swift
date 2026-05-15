@@ -14,7 +14,12 @@ final class FrostlakeGameStore: ObservableObject {
     init() {
         if let data = UserDefaults.standard.data(forKey: storeKey),
            let decoded = try? JSONDecoder().decode(FrostlakeGameState.self, from: data) {
-            self.state = decoded
+            var s = decoded
+            // Backfill unlockedSpots so existing saves see newly-added spots whose unlockDay has already passed.
+            for spot in FrostlakeLakeSpotData.all where spot.unlockDay <= s.day {
+                s.unlockedSpots.insert(spot.id)
+            }
+            self.state = s
         } else {
             self.state = FrostlakeGameState.freshState()
         }
@@ -41,13 +46,16 @@ final class FrostlakeGameStore: ObservableObject {
 
     func sleep() {
         var s = state
-        // Base nightly fatigue regen.
-        var regen = 4.0
+        // Base nightly fatigue regen (lower — sleep no longer fully erases hard days).
+        var regen = 3.0
         // Recipe buff "fatigue": reduces nightly fatigue regen burden.
         // Applies for the day cooked; tick logic below decays the buff at sleep.
         if s.buffsActiveKey == "fatigue" && s.buffsDaysRemaining > 0 {
             regen += 1.0
         }
+        // Stove tier boosts nightly regen by 0.25 per tier (max +1.0 at tier 4).
+        let stoveTier = s.homeTiers.indices.contains(1) ? s.homeTiers[1] : 0
+        regen += Double(stoveTier) * 0.25
         s.fatigue = max(0, s.fatigue - regen)
         // tick buff if any
         if s.buffsDaysRemaining > 0 {
@@ -118,17 +126,18 @@ final class FrostlakeGameStore: ObservableObject {
     // MARK: - Grade
     private func computeGradeFromState(_ s: FrostlakeGameState) -> Int {
         // 0..3 (C/B/A/S)
-        let speciesScore = min(22, s.almanacSpecies.count) * 4   // up to 88
-        let findsScore = min(12, s.almanacFinds.count) * 2       // up to 24
-        let festivalScore = min(6, s.festivalsAttended.count) * 5 // up to 30
+        let speciesScore = min(FrostlakeFishData.all.count, s.almanacSpecies.count) * 4   // up to 28*4 = 112
+        let findsScore = min(FrostlakeForagedData.all.count, s.almanacFinds.count) * 2    // up to 16*2 = 32
+        let festivalScore = min(FrostlakeFestivalData.all.count, s.festivalsAttended.count) * 5 // up to 9*5 = 45
         let relScore = s.npcRelationship.reduce(0, +) // up to 8*40 = 320
         let total = speciesScore + findsScore + festivalScore + relScore / 4
         // Recipe buff "grade" (Almanac Cake, baked on Day 30): bumps season grade by one band.
         let gradeBump = (s.buffsActiveKey == "grade" && s.buffsDaysRemaining > 0) ? 1 : 0
+        // Tightened thresholds: harder to reach S, scales with the expanded content set.
         let raw: Int
-        if total >= 130 { raw = 3 }       // S
-        else if total >= 95 { raw = 2 }   // A
-        else if total >= 60 { raw = 1 }   // B
+        if total >= 175 { raw = 3 }       // S
+        else if total >= 130 { raw = 2 }  // A
+        else if total >= 85 { raw = 1 }   // B
         else { raw = 0 }                   // C
         return min(3, raw + gradeBump)
     }
@@ -156,7 +165,7 @@ final class FrostlakeGameStore: ObservableObject {
                     kind: "tier"))
             }
         }
-        s.fatigue = min(10, s.fatigue + 0.15)
+        s.fatigue = min(10, s.fatigue + 0.2)
         if s.timeBlock < 5 { s.timeBlock += 1 }
         state = s
     }
@@ -261,8 +270,8 @@ final class FrostlakeGameStore: ObservableObject {
                 body: fish.lore,
                 kind: "milestone"))
         }
-        // occasional forage on cast
-        if Int.random(in: 0..<6) == 0 {
+        // occasional forage on cast (rarer than before — patience pays)
+        if Int.random(in: 0..<9) == 0 {
             if let find = FrostlakeForagedData.all.randomElement() {
                 s.inventoryFinds[find.id, default: 0] += 1
                 if !s.almanacFinds.contains(find.id) {
@@ -270,13 +279,16 @@ final class FrostlakeGameStore: ObservableObject {
                 }
             }
         }
-        s.fatigue = min(10, s.fatigue + 0.5)
+        // Fatigue cost scales mildly with rarity — chasing legendaries tires you out.
+        let rarityFatigue: Double = 0.55 + (Double(fish.rarity) * 0.08)
+        s.fatigue = min(10, s.fatigue + rarityFatigue)
         state = s
     }
 
     func failedCatch() {
         var s = state
-        s.fatigue = min(10, s.fatigue + 0.5)
+        // Failed casts still tire you: lake doesn't refund effort.
+        s.fatigue = min(10, s.fatigue + 0.65)
         state = s
     }
 
@@ -407,8 +419,8 @@ final class FrostlakeGameStore: ObservableObject {
         if !s2.festivalsAttended.contains(fest.id) {
             s2.festivalsAttended.insert(fest.id)
             s2.almanacFestivals.insert(fest.id)
-            // Base reward.
-            var reward = 25.0
+            // Base reward (trimmed — festivals are now richer in numbers, not in coin).
+            var reward = 18.0
             // Recipe buff "coin": +15-20% to coin reward today.
             if s2.buffsActiveKey == "coin" && s2.buffsDaysRemaining > 0 {
                 reward *= 1.20

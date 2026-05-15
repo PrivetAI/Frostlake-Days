@@ -248,7 +248,7 @@ struct FrostlakeInventoryGlance: View {
                 value: "\(game.state.inventoryFish.values.reduce(0, +))")
             row("Foraged finds", value: "\(game.state.inventoryFinds.values.reduce(0, +))")
             row("Ingredients", value: "\(game.state.inventoryIngredients.values.reduce(0, +))")
-            row("Recipes unlocked", value: "\(game.state.unlockedRecipes.count) / 18")
+            row("Recipes unlocked", value: "\(game.state.unlockedRecipes.count) / \(FrostlakeRecipeData.all.count)")
         }
         .padding(12)
         .background(

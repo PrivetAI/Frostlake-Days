@@ -439,7 +439,11 @@ enum FrostlakeLakeSpotData {
         FrostlakeLakeSpot(id: 2, name: "Mid-Lake Crack", unlockDay: 11,
                          description: "Rare species favor this seam; needs Toivo's auger upgrade."),
         FrostlakeLakeSpot(id: 3, name: "Forbidden Cape", unlockDay: 18,
-                         description: "Night-only; legendary species haunt the Late-Frost dusk.")
+                         description: "Night-only; legendary species haunt the Late-Frost dusk."),
+        FrostlakeLakeSpot(id: 4, name: "Reedbank Bay", unlockDay: 8,
+                         description: "Sheltered reeds at the south shore; favors patient bream and tench in mist."),
+        FrostlakeLakeSpot(id: 5, name: "Glassmere Shoal", unlockDay: 15,
+                         description: "Translucent shoal — rare grayling and char gather here on clear noons.")
     ]
 }
 
@@ -549,6 +553,32 @@ enum FrostlakeFishData {
                      availablePhases: [2], availableSpots: [3], availableBlocks: [4,5],
                      allowedWeather: [0,4],
                      lore: "The Moonwhite. Olaf will not say its second name aloud."),
+        // commons + mids at the new Reedbank Bay (spot 4)
+        FrostlakeFish(id: 22, name: "Dace", rarity: 0,
+                     availablePhases: [0,1], availableSpots: [0,4], availableBlocks: [1,2,3],
+                     allowedWeather: nil,
+                     lore: "Slim silver dace; runs the reed-line at the south bay edge."),
+        FrostlakeFish(id: 23, name: "Reed Carp", rarity: 1,
+                     availablePhases: [0,1,2], availableSpots: [4], availableBlocks: [2,3,4],
+                     allowedWeather: [0,1,4],
+                     lore: "Gold-flank carp from the reedbank; favors mist and patience."),
+        FrostlakeFish(id: 24, name: "Smelt Queen", rarity: 2,
+                     availablePhases: [1,2], availableSpots: [4,5], availableBlocks: [0,5],
+                     allowedWeather: [0,4],
+                     lore: "An oversized smelt with a marbled flank; the cove's gossip-fish."),
+        // rare + legendary at the new Glassmere Shoal (spot 5)
+        FrostlakeFish(id: 25, name: "Mirror Grayling", rarity: 2,
+                     availablePhases: [1,2], availableSpots: [5], availableBlocks: [1,2,3],
+                     allowedWeather: [0],
+                     lore: "Grayling with a mirror-bright dorsal sail; only visible on a clear noon."),
+        FrostlakeFish(id: 26, name: "Iron Char", rarity: 2,
+                     availablePhases: [1,2], availableSpots: [5,3], availableBlocks: [3,4],
+                     allowedWeather: [1,2],
+                     lore: "Dark-spined char; bites only when the snow falls quietly."),
+        FrostlakeFish(id: 27, name: "Aurora Sturgeon", rarity: 3,
+                     availablePhases: [2], availableSpots: [5,3], availableBlocks: [5],
+                     allowedWeather: [4],
+                     lore: "A long pale sturgeon trailing aurora-green sheen; few have weighed one and kept the line.")
     ]
 }
 
@@ -584,7 +614,15 @@ enum FrostlakeForagedData {
         FrostlakeForagedFind(id: 10, name: "Lost Charm",
                             description: "A child's metal charm; Mira knows its story."),
         FrostlakeForagedFind(id: 11, name: "Old Coin",
-                            description: "A worn coin stamped with an unfamiliar mark.")
+                            description: "A worn coin stamped with an unfamiliar mark."),
+        FrostlakeForagedFind(id: 12, name: "Frostbloom",
+                            description: "A pale flower that only opens in heavy snow; Saara hoards them."),
+        FrostlakeForagedFind(id: 13, name: "Pine Tar",
+                            description: "Black-amber tar drawn from a wounded pine; Eero's secret bait base."),
+        FrostlakeForagedFind(id: 14, name: "Folded Letter",
+                            description: "A weather-warped letter with three signatures and no date."),
+        FrostlakeForagedFind(id: 15, name: "Ice Crystal",
+                            description: "A geometric crystal grown from a single drip; rings like a bell when tapped.")
     ]
 }
 
@@ -654,7 +692,19 @@ enum FrostlakeRecipeData {
                        buffLabel: "Mistwarden — rare bite +8% today", buffKey: "rare", buffDays: 1),
         FrostlakeRecipe(id: 17, name: "Almanac Cake",
                        ingredients: ["shop:flour":2, "shop:sugar":2, "find:2":2],
-                       buffLabel: "Day 30 only — Season grade +1", buffKey: "grade", buffDays: 1)
+                       buffLabel: "Day 30 only — Season grade +1", buffKey: "grade", buffDays: 1),
+        FrostlakeRecipe(id: 18, name: "Reed Carp Risotto",
+                       ingredients: ["fish:23":1, "shop:rice":1, "shop:butter":1],
+                       buffLabel: "Marsh ear — bite window +6% today", buffKey: "bite", buffDays: 1),
+        FrostlakeRecipe(id: 19, name: "Frostbloom Tea",
+                       ingredients: ["find:12":1, "shop:honey":1],
+                       buffLabel: "Bloomwarden — rare bite +12% today", buffKey: "rare", buffDays: 1),
+        FrostlakeRecipe(id: 20, name: "Sturgeon Caviar",
+                       ingredients: ["fish:27":1, "shop:salt":1],
+                       buffLabel: "Estate gift — sell prices +20% today", buffKey: "sell", buffDays: 1),
+        FrostlakeRecipe(id: 21, name: "Iron Char Confit",
+                       ingredients: ["fish:26":1, "shop:butter":2, "find:13":1],
+                       buffLabel: "Long burn — fatigue -1 for two days", buffKey: "fatigue", buffDays: 2)
     ]
 }
 
@@ -686,6 +736,9 @@ enum FrostlakeShopData {
         FrostlakeShopItem(id: "decor_lantern", label: "Cabin Lantern", basePrice: 40, kind: "decor"),
         FrostlakeShopItem(id: "decor_rug", label: "Wool Rug", basePrice: 35, kind: "decor"),
         FrostlakeShopItem(id: "decor_clock", label: "Pine Clock", basePrice: 55, kind: "decor"),
+        FrostlakeShopItem(id: "shop:pepper", label: "Pepper", basePrice: 7, kind: "ingredient"),
+        FrostlakeShopItem(id: "shop:dried_herb", label: "Dried Herb", basePrice: 6, kind: "ingredient"),
+        FrostlakeShopItem(id: "lure_aurora", label: "Aurora Lure", basePrice: 48, kind: "gear"),
     ]
 
     static let dailyRotationSize = 7
@@ -701,14 +754,14 @@ struct FrostlakeRoom: Identifiable, Hashable {
 enum FrostlakeRoomData {
     static let all: [FrostlakeRoom] = [
         FrostlakeRoom(id: 0, name: "Kitchen", description: "Tier-up boosts cooked-buff duration."),
-        FrostlakeRoom(id: 1, name: "Stove", description: "Tier-up reduces nightly firewood by 20%."),
+        FrostlakeRoom(id: 1, name: "Stove", description: "Tier-up adds +0.25 nightly fatigue regen per tier (max +1.0)."),
         FrostlakeRoom(id: 2, name: "Bookshelf", description: "Tier-up unlocks one extra lore card per NPC tier."),
         FrostlakeRoom(id: 3, name: "Storeroom", description: "Tier-up raises inventory cap.")
     ]
 
     static func upgradeCost(roomId: Int, tier: Int) -> Int {
         // tier is current tier being upgraded from (0..3)
-        let base = (tier + 1) * 25
+        let base = (tier + 1) * 38
         let roomMod = [1, 1, 2, 1][roomId]
         return base * roomMod
     }
@@ -744,6 +797,15 @@ enum FrostlakeFestivalData {
         FrostlakeFestival(id: 5, day: 30, timeBlock: 5, location: "Inn",
                          name: "Almanac Ceremony",
                          description: "Frostlake rings the iron bell for every completed almanac."),
+        FrostlakeFestival(id: 6, day: 9, timeBlock: 4, location: "Reedbank Bay",
+                         name: "Reed Lantern Drift",
+                         description: "Hand-folded paper lanterns drift across the south bay at dusk."),
+        FrostlakeFestival(id: 7, day: 15, timeBlock: 0, location: "Forest Edge",
+                         name: "Frostbloom Dawn",
+                         description: "A pre-dawn walk to gather Frostbloom; bonus foraging for the day."),
+        FrostlakeFestival(id: 8, day: 22, timeBlock: 5, location: "Glassmere Shoal",
+                         name: "Glassmere Vigil",
+                         description: "A silent watch over the new shoal; rare-bite chances peak for the night.")
     ]
 }
 
@@ -943,11 +1005,11 @@ struct FrostlakeGameState: Codable {
             phase: 0,
             weatherToday: forecast.first ?? 0,
             fatigue: 0,
-            coins: 80,
+            coins: 45,
             inventoryFish: [:],
             inventoryFinds: [:],
-            inventoryGear: ["bait_basic": 6, "line_thin": 1, "lure_silver": 1],
-            inventoryIngredients: ["shop:butter": 2, "shop:flour": 2, "shop:salt": 2, "shop:sugar": 1],
+            inventoryGear: ["bait_basic": 4, "line_thin": 1],
+            inventoryIngredients: ["shop:flour": 1, "shop:salt": 1],
             npcRelationship: Array(repeating: 0, count: 8),
             homeTiers: Array(repeating: 0, count: 4),
             unlockedSpots: [0],
