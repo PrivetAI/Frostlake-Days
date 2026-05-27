@@ -64,7 +64,8 @@ struct FrostlakeDaysApp: App {
                 if let ready = frostlakeLinkReady {
                     if ready {
                         FrostlakeDaysWebPanel(urlString: frostlakeSourceLink)
-                            .edgesIgnoringSafeArea(.all)
+                            .edgesIgnoringSafeArea(.bottom)
+                            .background(Color.black.ignoresSafeArea())
                     } else {
                         FrostlakeRootView()
                             .environmentObject(game)
